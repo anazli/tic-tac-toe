@@ -1,6 +1,7 @@
-#include <SFML/Window.hpp>
+#include "app/application.h"
 
 int main() {
-  sf::Window window(sf::VideoMode(800, 600), "Test");
+  Application app;
+  app.RunMainLoop();
   return 0;
 }
