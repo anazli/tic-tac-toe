@@ -34,3 +34,6 @@
 # QtCreator
 .qtc_clangd/
 tic-tac-toe.*
+
+# build artifacts
+build
