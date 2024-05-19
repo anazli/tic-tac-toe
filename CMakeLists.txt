@@ -13,10 +13,13 @@ FetchContent_Declare(SFML
         GIT_TAG 2.6.x)
 FetchContent_MakeAvailable(SFML)
 
-set(SOURCES src/main/main.cpp)
+set(SOURCES src/app/application.cpp
+            src/app/application.h
+            src/main/main.cpp
+)
 
 add_executable(${EXE} ${SOURCES})
-target_include_directories(${EXE} PRIVATE ${PROJECT_SOURCE_DIR})
+target_include_directories(${EXE} PRIVATE ${PROJECT_SOURCE_DIR}/src)
 set_target_properties(${EXE} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${RUN_DIR})
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
