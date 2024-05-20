@@ -16,7 +16,7 @@ class Grid {
 
  private:
   void ArrangeCells();
-  void CreateLines();
+  void CreateGridLines(float thickness);
 
   sf::Vector2u grid_size_;
   sf::Vector2u texture_size_;
