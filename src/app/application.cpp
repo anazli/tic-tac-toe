@@ -1,6 +1,6 @@
 #include "app/application.h"
 
-Application::Application(int winWidth, int winHeith)
+Application::Application(unsigned int winWidth, unsigned int winHeith)
     : window_width_(winWidth), window_height_(winHeith) {}
 
 void Application::RunMainLoop() {
@@ -16,5 +16,6 @@ void Application::RunMainLoop() {
 }
 
 void Application::CreateWindow() {
+  window_.setPosition(sf::Vector2i(500, 500));
   window_.create(sf::VideoMode(window_width_, window_height_), "Tic Tac Toe");
 }

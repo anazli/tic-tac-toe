@@ -4,7 +4,7 @@
 
 class Application {
  public:
-  Application(int winWidth = 800, int winHeight = 600);
+  Application(unsigned int winWidth = 800, unsigned int winHeight = 600);
   Application(const Application& other) = delete;
   Application& operator=(const Application& other) = delete;
 
@@ -14,6 +14,6 @@ class Application {
   void CreateWindow();
 
   sf::Window window_;
-  int window_width_;
-  int window_height_;
+  unsigned int window_width_;
+  unsigned int window_height_;
 };
