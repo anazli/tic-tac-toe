@@ -2,9 +2,8 @@
 
 #include <cassert>
 
-Grid::Grid(const sf::Vector2u& gridSize, const sf::Vector2u& winSize,
-           const sf::Vector2u& texSize)
-    : grid_size_(gridSize), texture_size_(texSize) {
+Grid::Grid(const sf::Vector2u& winSize, const sf::Vector2u& texSize)
+    : texture_size_(texSize) {
   sf::Vector2f windowCenter = sf::Vector2f(winSize) / 2.f;
   origin_.x = windowCenter.x - 3.f * texSize.x / 2.f;
   origin_.y = windowCenter.y - 3.f * texSize.y / 2.f;

@@ -8,8 +8,7 @@
 
 class Grid {
  public:
-  Grid(const sf::Vector2u& gridSize, const sf::Vector2u& winSize,
-       const sf::Vector2u& texSize);
+  Grid(const sf::Vector2u& winSize, const sf::Vector2u& texSize);
 
   Cell& GetCellAt(unsigned int row, unsigned int col);
   void Draw(sf::RenderWindow& window);
@@ -18,7 +17,8 @@ class Grid {
   void ArrangeCells();
   void CreateGridLines(float thickness);
 
-  sf::Vector2u grid_size_;
+  const sf::Vector2u grid_size_ = sf::Vector2u(3, 3);
+
   sf::Vector2u texture_size_;
   sf::Vector2f origin_;
   std::vector<std::vector<Cell>> cells_;

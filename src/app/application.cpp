@@ -14,7 +14,7 @@ void Application::RunMainLoop() {
   if (!tex.loadFromFile("../assets/textureX.jpg")) {
     // Error
   }
-  Grid grid(sf::Vector2u(3, 3), window_.getSize(), tex.getSize());
+  Grid grid(window_.getSize(), tex.getSize());
   while (window_.isOpen()) {
     sf::Event event;
     while (window_.pollEvent(event)) {
