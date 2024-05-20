@@ -11,7 +11,7 @@ void Application::RunMainLoop() {
       if (event.type == sf::Event::Closed) {
         window_.close();
       }
-      window_.clear(sf::Color::Black);
+      window_.clear(sf::Color::Black);  // todo: might not be necessary
       /***********************
        * draw logic here
        * *********************/
