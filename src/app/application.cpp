@@ -11,6 +11,11 @@ void Application::RunMainLoop() {
       if (event.type == sf::Event::Closed) {
         window_.close();
       }
+      window_.clear(sf::Color::Black);
+      /***********************
+       * draw logic here
+       * *********************/
+      window_.display();
     }
   }
 }
