@@ -1,5 +1,7 @@
 #include "gfx/cell.h"
 
+Cell::Cell() : state_(State::EMPTY) { sprite_.setColor(sf::Color::Black); }
+
 void Cell::SetTexture(const sf::Texture& tex) { sprite_.setTexture(tex); }
 
 void Cell::SetPosition(const sf::Vector2f& pos) { sprite_.setPosition(pos); }
