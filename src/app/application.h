@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window.hpp>
 
 class Application {
@@ -13,7 +14,7 @@ class Application {
  private:
   void CreateWindow();
 
-  sf::Window window_;
+  sf::RenderWindow window_;
   unsigned int window_width_;
   unsigned int window_height_;
 };
