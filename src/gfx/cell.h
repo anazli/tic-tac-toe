@@ -7,7 +7,7 @@ class Cell {
  public:
   enum class State { EMPTY, FILLED };
 
-  Cell() = default;
+  Cell();
   void SetTexture(const sf::Texture& tex);
   void SetPosition(const sf::Vector2f& pos);
   void SetState(const State& s);

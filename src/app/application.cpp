@@ -1,10 +1,20 @@
+
 #include "app/application.h"
+
+#include <SFML/Graphics/RectangleShape.hpp>
+
+#include "gfx/grid.h"
 
 Application::Application(unsigned int winWidth, unsigned int winHeith)
     : window_width_(winWidth), window_height_(winHeith) {}
 
 void Application::RunMainLoop() {
   CreateWindow();
+  sf::Texture tex;
+  if (!tex.loadFromFile("../assets/textureX.jpg")) {
+    // Error
+  }
+  Grid grid(sf::Vector2u(3, 3), window_.getSize(), tex.getSize());
   while (window_.isOpen()) {
     sf::Event event;
     while (window_.pollEvent(event)) {
@@ -15,6 +25,7 @@ void Application::RunMainLoop() {
       /***********************
        * draw logic here
        * *********************/
+      grid.Draw(window_);
       window_.display();
     }
   }
