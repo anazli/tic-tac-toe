@@ -10,16 +10,26 @@ Application::Application(unsigned int winWidth, unsigned int winHeith)
 
 void Application::RunMainLoop() {
   CreateWindow();
-  sf::Texture tex;
-  if (!tex.loadFromFile("../assets/textureX.jpg")) {
+  sf::Texture texX;
+  if (!texX.loadFromFile("../assets/textureX.jpg")) {
     // Error
   }
-  Grid grid(window_.getSize(), tex.getSize());
+  sf::Texture texBlack;
+  if (!texBlack.loadFromFile("../assets/black.jpg")) {
+    // Error
+  }
+  Grid grid(window_.getSize(), texBlack.getSize(), 2.f);
+  grid.SetInitialStateOfCells(texBlack, sf::Vector2f(0.99f, 0.99f));
   while (window_.isOpen()) {
     sf::Event event;
     while (window_.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
         window_.close();
+      }
+      if (event.type == sf::Event::MouseButtonPressed) {
+        auto pos = sf::Mouse::getPosition(window_);
+        auto transfPos = window_.mapPixelToCoords(pos);
+        grid.UpdateCell(transfPos, texX);
       }
       window_.clear(sf::Color::Black);  // todo: might not be necessary
       /***********************

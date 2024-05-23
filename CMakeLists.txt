@@ -15,7 +15,6 @@ FetchContent_MakeAvailable(SFML)
 
 set(SOURCES src/app/application.cpp
             src/app/application.h
-            src/gfx/cell.cpp
             src/gfx/cell.h
             src/gfx/grid.cpp
             src/gfx/grid.h
