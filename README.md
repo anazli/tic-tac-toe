@@ -4,9 +4,16 @@ under construction..
 
 See if you can compete against AI.
 
-
 The project uses the [sfml](https://www.sfml-dev.org/index.php) multimedia library.
 For installing required packages before building check out this [page](https://www.sfml-dev.org/tutorials/2.6/start-cmake.php).
+
+Here is how the game might look like 
+Empty
+![alt text](https://github.com/anazli/tic-tac-toe/blob/assets/grid_empty.png?raw=true)
+
+Filled
+![alt text](https://github.com/anazli/tic-tac-toe/blob/assets/grid_filled.png?raw=true)
+
 
 Building
 --------
