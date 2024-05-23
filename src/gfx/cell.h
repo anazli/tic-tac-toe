@@ -12,7 +12,9 @@ class Cell {
   void SetPosition(const sf::Vector2f& pos);
   void SetState(const State& s);
   State GetState() const;
+  sf::Sprite& GetDrawable();
   const sf::Sprite& GetDrawable() const;
+  bool CanBeUpdated(const sf::Vector2f& mousePos) const;
 
  private:
   State state_;

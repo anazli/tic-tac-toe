@@ -10,4 +10,10 @@ void Cell::SetState(const State& s) { state_ = s; }
 
 Cell::State Cell::GetState() const { return state_; }
 
+sf::Sprite& Cell::GetDrawable() { return sprite_; }
+
 const sf::Sprite& Cell::GetDrawable() const { return sprite_; }
+
+bool Cell::CanBeUpdated(const sf::Vector2f& mousePos) const {
+  return sprite_.getGlobalBounds().contains(mousePos) && state_ == State::EMPTY;
+}
