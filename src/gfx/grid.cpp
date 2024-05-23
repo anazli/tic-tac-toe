@@ -28,12 +28,23 @@ void Grid::Draw(sf::RenderWindow& window) {
   }
 }
 
+void Grid::UpdateCell(const sf::Vector2f& mousePos, const sf::Texture& tex) {
+  for (auto& row : cells_) {
+    for (auto& cell : row) {
+      if (cell.CanBeUpdated(mousePos)) {
+        cell.GetDrawable().setTexture(tex);
+        cell.SetState(Cell::State::FILLED);
+      }
+    }
+  }
+}
+
 void Grid::ArrangeCells() {
-  for (auto row = 1; row <= grid_size_.x; ++row) {
+  for (auto row = 0; row < grid_size_.x; ++row) {
     std::vector<Cell> cols;
-    for (auto col = 1; col <= grid_size_.y; ++col) {
-      float x = origin_.x * col;
-      float y = origin_.y * row;
+    for (auto col = 0; col < grid_size_.y; ++col) {
+      float x = origin_.x + texture_size_.x * col;
+      float y = origin_.y + texture_size_.y * row;
       Cell c;
       c.SetPosition(sf::Vector2f(x, y));
       cols.emplace_back(c);

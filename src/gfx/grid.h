@@ -12,6 +12,7 @@ class Grid {
 
   Cell& GetCellAt(unsigned int row, unsigned int col);
   void Draw(sf::RenderWindow& window);
+  void UpdateCell(const sf::Vector2f& mousePos, const sf::Texture& tex);
 
  private:
   void ArrangeCells();
