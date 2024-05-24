@@ -8,7 +8,8 @@
 
 Application::Application(unsigned int winWidth, unsigned int winHeith)
     : window_width_(winWidth), window_height_(winHeith) {
-  CreateWindow();
+  window_.setPosition(sf::Vector2i(500, 500));
+  window_.create(sf::VideoMode(window_width_, window_height_), "Tic Tac Toe");
 }
 
 void Application::InitPlayers(const sf::Texture& tex1,
@@ -82,11 +83,6 @@ void Application::RunMainLoop() {
       window_.display();
     }
   }
-}
-
-void Application::CreateWindow() {
-  window_.setPosition(sf::Vector2i(500, 500));
-  window_.create(sf::VideoMode(window_width_, window_height_), "Tic Tac Toe");
 }
 
 bool Application::IsPlayerMoveValid(const Cell& c) const {
