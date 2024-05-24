@@ -17,7 +17,6 @@ class Application {
   void RunMainLoop();
 
  private:
-  void CreateWindow();
   bool IsPlayerMoveValid(const Cell& c) const;
   int mapUnicodeToInt(char c);
 
