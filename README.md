@@ -8,8 +8,14 @@ The project uses the [sfml](https://www.sfml-dev.org/index.php) multimedia libra
 For installing required packages before building check out this [page](https://www.sfml-dev.org/tutorials/2.6/start-cmake.php).
 
 Here is how the game might look like 
+
+Player wins
 --------
-![alt text](https://github.com/anazli/tic-tac-toe/blob/main/assets/grid.png?raw=true)
+![alt text](https://github.com/anazli/tic-tac-toe/blob/main/assets/game_win.png?raw=true)
+
+Player looses
+--------
+![alt text](https://github.com/anazli/tic-tac-toe/blob/main/assets/game_defeat.png?raw=true)
 
 Building
 --------
