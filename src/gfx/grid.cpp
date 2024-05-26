@@ -1,13 +1,11 @@
 #include "gfx/grid.h"
 
-#include <cassert>
-
 void Grid::Init(const GridParams& params) {
-  line_length_ = params.default_tex_size_.x * cells_.size();
   sf::Vector2f windowCenter = sf::Vector2f(params.window_size_) / 2.f;
   origin_.x = windowCenter.x - 3.f * params.default_tex_size_.x / 2.f;
   origin_.y = windowCenter.y - 3.f * params.default_tex_size_.y / 2.f;
   ArrangeCells(params.default_tex_size_, params.line_thickness_);
+  line_length_ = params.default_tex_size_.x * cells_.size();
   CreateStaticGridLines(params.default_tex_size_, params.line_thickness_);
   /*if (!final_tex.loadFromFile("../assets/final_line.jpg")) {
     // Error
@@ -48,7 +46,7 @@ void Grid::SetInitialStateOfCells(const sf::Texture& tex,
 }
 
 Cell* Grid::FindCellAtPos(sf::Vector2f& pos) {
-  Cell* c;
+  Cell* c = nullptr;
   for (auto& row : cells_) {
     for (auto& cell : row) {
       if (cell.sprite_.getGlobalBounds().contains(pos)) {
@@ -61,7 +59,7 @@ Cell* Grid::FindCellAtPos(sf::Vector2f& pos) {
 }
 
 Cell* Grid::FindCellById(unsigned int id) {
-  Cell* c;
+  Cell* c = nullptr;
   for (auto& row : cells_) {
     for (auto& cell : row) {
       if (cell.id_ == id) {
@@ -131,25 +129,21 @@ void Grid::ArrangeCells(const sf::Vector2u& texture_size,
 void Grid::CreateStaticGridLines(const sf::Vector2u& texture_size,
                                  float line_thickness) {
   lines_[0].setPosition(origin_.x, origin_.y + texture_size.y);
-  lines_[0].setSize(
-      sf::Vector2f(texture_size.x * cells_[0].size(), line_thickness));
+  lines_[0].setSize(sf::Vector2f(line_length_, line_thickness));
 
   lines_[1].setPosition(origin_.x, origin_.y + 2 * texture_size.y);
-  lines_[1].setSize(
-      sf::Vector2f(texture_size.x * cells_[0].size(), line_thickness));
+  lines_[1].setSize(sf::Vector2f(line_length_, line_thickness));
 
   lines_[2].setPosition(origin_.x + texture_size.x, origin_.y);
-  lines_[2].setSize(
-      sf::Vector2f(line_thickness, texture_size.x * cells_.size()));
+  lines_[2].setSize(sf::Vector2f(line_thickness, line_length_));
 
   lines_[3].setPosition(origin_.x + 2 * texture_size.x, origin_.y);
-  lines_[3].setSize(
-      sf::Vector2f(line_thickness, texture_size.x * cells_.size()));
+  lines_[3].setSize(sf::Vector2f(line_thickness, line_length_));
 }
 
 void Grid::CreateWiningLine(float x, float y, float rotation) {
   final_line_.setPosition(x, y);
   final_line_.setSize(sf::Vector2f(line_length_, 2.f));
   final_line_.setRotation(rotation);
-  final_line_.setOutlineColor(sf::Color::Red);
+  final_line_.setFillColor(sf::Color::Red);
 }
