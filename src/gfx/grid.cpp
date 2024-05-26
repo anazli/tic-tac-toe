@@ -96,8 +96,10 @@ bool Grid::AnyTripletFor(const Player::ID& player_id) {
       cells_[1][1].player_id_ == player_id &&
       cells_[2][2].player_id_ == player_id) {
     Cell c(cells_[0][0]);
-    CreateWiningLine(c.sprite_.getGlobalBounds().getPosition().x,
-                     c.sprite_.getGlobalBounds().getPosition().y, 45.f);
+    sf::Vector2f pos(c.sprite_.getGlobalBounds().getPosition().x,
+                     c.sprite_.getGlobalBounds().getPosition().y);
+    float offset = c.sprite_.getGlobalBounds().width / 2.f;
+    CreateWiningLine(pos.x + offset, pos.y + offset, 45.f);
     return true;
   }
 
@@ -105,10 +107,10 @@ bool Grid::AnyTripletFor(const Player::ID& player_id) {
       cells_[1][1].player_id_ == player_id &&
       cells_[2][0].player_id_ == player_id) {
     Cell c(cells_[2][0]);
-    CreateWiningLine(c.sprite_.getGlobalBounds().left,
-                     c.sprite_.getGlobalBounds().getPosition().y +
-                         c.sprite_.getGlobalBounds().height,
-                     -45.f);
+    sf::Vector2f pos(c.sprite_.getGlobalBounds().left,
+                     c.sprite_.getGlobalBounds().getPosition().y);
+    float offset = c.sprite_.getGlobalBounds().height;
+    CreateWiningLine(pos.x + offset / 2.f, pos.y + offset / 2.f, -45.f);
     return true;
   }
   return false;
