@@ -91,7 +91,7 @@ void Application::RunMainLoop() {
       if (DoesPlayerWin(player1_.id_)) {
         DisplayMessage("You Won!!!", fonts_.wining_msg_font_, sf::Color::Cyan);
       } else if (DoesPlayerWin(player2_.id_)) {
-        DisplayMessage("You Lost...", fonts_.loosing_msg_font_, sf::Color::Red);
+        DisplayMessage("Game Over!", fonts_.loosing_msg_font_, sf::Color::Red);
         // You lost (AI wins)
         // terminate or reset
       } else {
@@ -129,7 +129,7 @@ void Application::DisplayMessage(const std::string& msg, const sf::Font& font,
   sf::Text text;
   text.setFont(font);
   text.setString(message);
-  text.setCharacterSize(148);
+  text.setCharacterSize(128);
   text.setFillColor(c);
   text.setPosition(0.f, window_.getSize().y / 3.f);
   window_.draw(text);
