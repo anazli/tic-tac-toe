@@ -2,6 +2,7 @@
 #include "app/application.h"
 
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <iostream>
 
 #include "gfx/grid.h"
@@ -10,6 +11,7 @@ Application::Application(unsigned int winWidth, unsigned int winHeith)
     : window_width_(winWidth), window_height_(winHeith) {
   window_.setPosition(sf::Vector2i(500, 500));
   window_.create(sf::VideoMode(window_width_, window_height_), "Tic Tac Toe");
+  LoadFonts();
 }
 
 void Application::InitPlayers(const sf::Texture& tex1,
@@ -83,12 +85,13 @@ void Application::RunMainLoop() {
         }
       }
 
+      grid_.Draw(window_);
+      grid_.DrawWiningLine(window_);
+
       if (DoesPlayerWin(player1_.id_)) {
-        std::cout << "You won!" << std::endl;
-        // You won (human)
-        // terminate or reset
+        DisplayMessage("You Won!!!", fonts_.wining_msg_font_, sf::Color::Cyan);
       } else if (DoesPlayerWin(player2_.id_)) {
-        std::cout << "You lost!" << std::endl;
+        DisplayMessage("You Lost...", fonts_.loosing_msg_font_, sf::Color::Red);
         // You lost (AI wins)
         // terminate or reset
       } else {
@@ -96,8 +99,6 @@ void Application::RunMainLoop() {
         // terminate or reset
       }
 
-      grid_.Draw(window_);
-      grid_.DrawWiningLine(window_);
       window_.display();
     }
   }
@@ -111,4 +112,25 @@ int Application::MapInputToGridId(char c) { return static_cast<int>(c - '0'); }
 
 bool Application::DoesPlayerWin(const Player::ID& player_id) {
   return grid_.AnyTripletFor(player_id);
+}
+
+bool Application::LoadFonts() {
+  if (!fonts_.wining_msg_font_.loadFromFile("../assets/chlorinr.ttf") ||
+      !fonts_.loosing_msg_font_.loadFromFile("../assets/plasdrpe.ttf")) {
+    // error
+    return false;
+  }
+  return true;
+}
+
+void Application::DisplayMessage(const std::string& msg, const sf::Font& font,
+                                 const sf::Color& c) {
+  std::string message = msg;  //+ "Click or press enter to continue..";
+  sf::Text text;
+  text.setFont(font);
+  text.setString(message);
+  text.setCharacterSize(148);
+  text.setFillColor(c);
+  text.setPosition(0.f, window_.getSize().y / 3.f);
+  window_.draw(text);
 }
