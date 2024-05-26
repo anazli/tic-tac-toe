@@ -17,18 +17,25 @@ class Grid {
  public:
   void Init(const GridParams& params);
   void Draw(sf::RenderWindow& window);
-  void UpdateCell(unsigned int id, const Player& player);
+  void DrawWiningLine(sf::RenderWindow& window);
+  void UpdateCell(Cell& c, const Player& player);
   void SetInitialStateOfCells(const sf::Texture& tex,
                               const sf::Vector2f& scale);
-  Cell FindCellAt(const sf::Vector2f& pos) const;
-  Cell FindCellById(unsigned int id);
+  Cell* FindCellAtPos(sf::Vector2f& pos);
+  Cell* FindCellById(unsigned int id);
+  bool AnyTripletFor(const Player::ID& player_id);
 
  private:
   void ArrangeCells(const sf::Vector2u& texture_size, float line_thickness);
-  void CreateGridLines(const sf::Vector2u& texture_size, float line_thickness);
+  void CreateStaticGridLines(const sf::Vector2u& texture_size,
+                             float line_thickness);
+  void CreateWiningLine(float x, float y, float rotation);
 
   const sf::Vector2u grid_size_ = sf::Vector2u(3, 3);
   sf::Vector2f origin_;
   std::vector<std::vector<Cell>> cells_;
   std::vector<sf::RectangleShape> lines_ = std::vector<sf::RectangleShape>(4);
+  float line_length_;
+  sf::RectangleShape final_line_;
+  sf::Texture final_tex;
 };

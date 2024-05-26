@@ -3,11 +3,16 @@
 #include <cassert>
 
 void Grid::Init(const GridParams& params) {
+  line_length_ = params.default_tex_size_.x * cells_.size();
   sf::Vector2f windowCenter = sf::Vector2f(params.window_size_) / 2.f;
   origin_.x = windowCenter.x - 3.f * params.default_tex_size_.x / 2.f;
   origin_.y = windowCenter.y - 3.f * params.default_tex_size_.y / 2.f;
   ArrangeCells(params.default_tex_size_, params.line_thickness_);
-  CreateGridLines(params.default_tex_size_, params.line_thickness_);
+  CreateStaticGridLines(params.default_tex_size_, params.line_thickness_);
+  /*if (!final_tex.loadFromFile("../assets/final_line.jpg")) {
+    // Error
+  }
+  final_line_.setTexture(&final_tex);*/
 }
 
 void Grid::Draw(sf::RenderWindow& window) {
@@ -21,17 +26,14 @@ void Grid::Draw(sf::RenderWindow& window) {
   }
 }
 
-void Grid::UpdateCell(unsigned int id, const Player& player) {
-  for (auto& row : cells_) {
-    for (auto& cell : row) {
-      if (cell.id_ == id) {
-        cell.sprite_.setTexture(player.texture_);
-        cell.state_ = Cell::State::FILLED;
-        cell.player_id_ = player.id_;
-        break;
-      }
-    }
-  }
+void Grid::DrawWiningLine(sf::RenderWindow& window) {
+  window.draw(final_line_);
+}
+
+void Grid::UpdateCell(Cell& c, const Player& player) {
+  c.sprite_.setTexture(player.texture_);
+  c.state_ = Cell::State::FILLED;
+  c.player_id_ = player.id_;
 }
 
 void Grid::SetInitialStateOfCells(const sf::Texture& tex,
@@ -45,12 +47,12 @@ void Grid::SetInitialStateOfCells(const sf::Texture& tex,
   }
 }
 
-Cell Grid::FindCellAt(const sf::Vector2f& pos) const {
-  Cell c;
+Cell* Grid::FindCellAtPos(sf::Vector2f& pos) {
+  Cell* c;
   for (auto& row : cells_) {
     for (auto& cell : row) {
       if (cell.sprite_.getGlobalBounds().contains(pos)) {
-        c = cell;
+        c = &cell;
         break;
       }
     }
@@ -58,17 +60,55 @@ Cell Grid::FindCellAt(const sf::Vector2f& pos) const {
   return c;
 }
 
-Cell Grid::FindCellById(unsigned int id) {
-  Cell c;
+Cell* Grid::FindCellById(unsigned int id) {
+  Cell* c;
   for (auto& row : cells_) {
     for (auto& cell : row) {
       if (cell.id_ == id) {
-        c = cell;
+        c = &cell;
         break;
       }
     }
   }
   return c;
+}
+
+bool Grid::AnyTripletFor(const Player::ID& player_id) {
+  for (const auto& row : cells_) {
+    if (row[0].player_id_ == player_id && row[1].player_id_ == player_id &&
+        row[2].player_id_ == player_id) {
+      CreateWiningLine(row[0].sprite_.getOrigin().x,
+                       row[0].sprite_.getOrigin().y, 0.f);
+      return true;
+    }
+  }
+
+  for (int col = 0; col < cells_.size(); ++col) {
+    if (cells_[0][col].player_id_ == player_id &&
+        cells_[1][col].player_id_ == player_id &&
+        cells_[2][col].player_id_ == player_id) {
+      CreateWiningLine(cells_[0][col].sprite_.getOrigin().x,
+                       cells_[0][col].sprite_.getOrigin().y, 90.f);
+      return true;
+    }
+  }
+
+  if (cells_[0][0].player_id_ == player_id &&
+      cells_[1][1].player_id_ == player_id &&
+      cells_[2][2].player_id_ == player_id) {
+    CreateWiningLine(cells_[0][0].sprite_.getOrigin().x,
+                     cells_[0][0].sprite_.getOrigin().y, 45.f);
+    return true;
+  }
+
+  if (cells_[0][2].player_id_ == player_id &&
+      cells_[1][1].player_id_ == player_id &&
+      cells_[2][0].player_id_ == player_id) {
+    CreateWiningLine(cells_[2][0].sprite_.getOrigin().x,
+                     cells_[2][0].sprite_.getOrigin().y, -45.f);
+    return true;
+  }
+  return false;
 }
 
 void Grid::ArrangeCells(const sf::Vector2u& texture_size,
@@ -88,8 +128,8 @@ void Grid::ArrangeCells(const sf::Vector2u& texture_size,
   }
 }
 
-void Grid::CreateGridLines(const sf::Vector2u& texture_size,
-                           float line_thickness) {
+void Grid::CreateStaticGridLines(const sf::Vector2u& texture_size,
+                                 float line_thickness) {
   lines_[0].setPosition(origin_.x, origin_.y + texture_size.y);
   lines_[0].setSize(
       sf::Vector2f(texture_size.x * cells_[0].size(), line_thickness));
@@ -105,4 +145,11 @@ void Grid::CreateGridLines(const sf::Vector2u& texture_size,
   lines_[3].setPosition(origin_.x + 2 * texture_size.x, origin_.y);
   lines_[3].setSize(
       sf::Vector2f(line_thickness, texture_size.x * cells_.size()));
+}
+
+void Grid::CreateWiningLine(float x, float y, float rotation) {
+  final_line_.setPosition(x, y);
+  final_line_.setSize(sf::Vector2f(line_length_, 2.f));
+  final_line_.setRotation(rotation);
+  final_line_.setOutlineColor(sf::Color::Red);
 }

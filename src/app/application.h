@@ -18,7 +18,8 @@ class Application {
 
  private:
   bool IsPlayerMoveValid(const Cell& c) const;
-  int mapUnicodeToInt(char c);
+  int MapInputToGridId(char c);
+  bool DoesPlayerWin(const Player::ID& player_id);
 
   sf::RenderWindow window_;
   unsigned int window_width_;

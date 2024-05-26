@@ -56,11 +56,13 @@ void Application::RunMainLoop() {
         if (player1_.state_ == Player::State::READY) {
           auto pixel_pos = sf::Mouse::getPosition(window_);
           auto coords = window_.mapPixelToCoords(pixel_pos);
-          Cell c = grid_.FindCellAt(coords);
-          if (IsPlayerMoveValid(c)) {
-            grid_.UpdateCell(c.id_, player1_);
-            player1_.state_ = Player::State::WAITING;
-            player2_.state_ = Player::State::READY;
+          Cell* c = grid_.FindCellAtPos(coords);
+          if (c) {
+            if (IsPlayerMoveValid(*c)) {
+              grid_.UpdateCell(*c, player1_);
+              player1_.state_ = Player::State::WAITING;
+              player2_.state_ = Player::State::READY;
+            }
           }
         }
       }
@@ -68,15 +70,32 @@ void Application::RunMainLoop() {
       if (event.type == sf::Event::TextEntered) {
         if (event.text.unicode >= 49 && event.text.unicode <= 57) {
           if (player2_.state_ == Player::State::READY) {
-            int id = mapUnicodeToInt(event.text.unicode);
-            Cell c = grid_.FindCellById(id);
-            if (IsPlayerMoveValid(c)) {
-              grid_.UpdateCell(c.id_, player2_);
-              player2_.state_ = Player::State::WAITING;
-              player1_.state_ = Player::State::READY;
+            int id = MapInputToGridId(event.text.unicode);
+            Cell* c = grid_.FindCellById(id);
+            if (c) {
+              if (IsPlayerMoveValid(*c)) {
+                grid_.UpdateCell(*c, player2_);
+                player2_.state_ = Player::State::WAITING;
+                player1_.state_ = Player::State::READY;
+              }
             }
           }
         }
+      }
+
+      if (DoesPlayerWin(player1_.id_)) {
+        std::cout << "You won!" << std::endl;
+        grid_.DrawWiningLine(window_);
+        // You won (human)
+        // terminate or reset
+      } else if (DoesPlayerWin(player2_.id_)) {
+        std::cout << "You lost!" << std::endl;
+        grid_.DrawWiningLine(window_);
+        // You lost (AI wins)
+        // terminate or reset
+      } else {
+        // check if we have draw
+        // terminate or reset
       }
 
       grid_.Draw(window_);
@@ -89,4 +108,8 @@ bool Application::IsPlayerMoveValid(const Cell& c) const {
   return c.id_ >= 1 && c.id_ <= 9 && c.state_ == Cell::State::EMPTY;
 }
 
-int Application::mapUnicodeToInt(char c) { return static_cast<int>(c - '0'); }
+int Application::MapInputToGridId(char c) { return static_cast<int>(c - '0'); }
+
+bool Application::DoesPlayerWin(const Player::ID& player_id) {
+  return grid_.AnyTripletFor(player_id);
+}
