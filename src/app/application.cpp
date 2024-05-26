@@ -85,12 +85,10 @@ void Application::RunMainLoop() {
 
       if (DoesPlayerWin(player1_.id_)) {
         std::cout << "You won!" << std::endl;
-        grid_.DrawWiningLine(window_);
         // You won (human)
         // terminate or reset
       } else if (DoesPlayerWin(player2_.id_)) {
         std::cout << "You lost!" << std::endl;
-        grid_.DrawWiningLine(window_);
         // You lost (AI wins)
         // terminate or reset
       } else {
@@ -99,6 +97,7 @@ void Application::RunMainLoop() {
       }
 
       grid_.Draw(window_);
+      grid_.DrawWiningLine(window_);
       window_.display();
     }
   }

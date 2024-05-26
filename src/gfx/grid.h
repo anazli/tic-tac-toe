@@ -37,5 +37,4 @@ class Grid {
   std::vector<sf::RectangleShape> lines_ = std::vector<sf::RectangleShape>(4);
   float line_length_;
   sf::RectangleShape final_line_;
-  sf::Texture final_tex;
 };

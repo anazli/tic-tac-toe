@@ -7,10 +7,6 @@ void Grid::Init(const GridParams& params) {
   ArrangeCells(params.default_tex_size_, params.line_thickness_);
   line_length_ = params.default_tex_size_.x * cells_.size();
   CreateStaticGridLines(params.default_tex_size_, params.line_thickness_);
-  /*if (!final_tex.loadFromFile("../assets/final_line.jpg")) {
-    // Error
-  }
-  final_line_.setTexture(&final_tex);*/
 }
 
 void Grid::Draw(sf::RenderWindow& window) {
@@ -75,8 +71,11 @@ bool Grid::AnyTripletFor(const Player::ID& player_id) {
   for (const auto& row : cells_) {
     if (row[0].player_id_ == player_id && row[1].player_id_ == player_id &&
         row[2].player_id_ == player_id) {
-      CreateWiningLine(row[0].sprite_.getOrigin().x,
-                       row[0].sprite_.getOrigin().y, 0.f);
+      Cell c(row[0]);
+      CreateWiningLine(
+          c.sprite_.getPosition().x,
+          c.sprite_.getPosition().y + c.sprite_.getGlobalBounds().height / 2.f,
+          0.f);
       return true;
     }
   }
@@ -85,8 +84,10 @@ bool Grid::AnyTripletFor(const Player::ID& player_id) {
     if (cells_[0][col].player_id_ == player_id &&
         cells_[1][col].player_id_ == player_id &&
         cells_[2][col].player_id_ == player_id) {
-      CreateWiningLine(cells_[0][col].sprite_.getOrigin().x,
-                       cells_[0][col].sprite_.getOrigin().y, 90.f);
+      Cell c(cells_[0][col]);
+      CreateWiningLine(
+          c.sprite_.getPosition().x + c.sprite_.getGlobalBounds().width / 2.f,
+          c.sprite_.getPosition().y, 90.f);
       return true;
     }
   }
@@ -94,16 +95,20 @@ bool Grid::AnyTripletFor(const Player::ID& player_id) {
   if (cells_[0][0].player_id_ == player_id &&
       cells_[1][1].player_id_ == player_id &&
       cells_[2][2].player_id_ == player_id) {
-    CreateWiningLine(cells_[0][0].sprite_.getOrigin().x,
-                     cells_[0][0].sprite_.getOrigin().y, 45.f);
+    Cell c(cells_[0][0]);
+    CreateWiningLine(c.sprite_.getGlobalBounds().getPosition().x,
+                     c.sprite_.getGlobalBounds().getPosition().y, 45.f);
     return true;
   }
 
   if (cells_[0][2].player_id_ == player_id &&
       cells_[1][1].player_id_ == player_id &&
       cells_[2][0].player_id_ == player_id) {
-    CreateWiningLine(cells_[2][0].sprite_.getOrigin().x,
-                     cells_[2][0].sprite_.getOrigin().y, -45.f);
+    Cell c(cells_[2][0]);
+    CreateWiningLine(c.sprite_.getGlobalBounds().left,
+                     c.sprite_.getGlobalBounds().getPosition().y +
+                         c.sprite_.getGlobalBounds().height,
+                     -45.f);
     return true;
   }
   return false;
@@ -143,7 +148,7 @@ void Grid::CreateStaticGridLines(const sf::Vector2u& texture_size,
 
 void Grid::CreateWiningLine(float x, float y, float rotation) {
   final_line_.setPosition(x, y);
-  final_line_.setSize(sf::Vector2f(line_length_, 2.f));
+  final_line_.setSize(sf::Vector2f(line_length_, 5.f));
   final_line_.setRotation(rotation);
   final_line_.setFillColor(sf::Color::Red);
 }
