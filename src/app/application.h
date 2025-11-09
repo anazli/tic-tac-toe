@@ -18,10 +18,10 @@ class Application {
   void InitPlayers();
   void InitGrid();
   void RunMainLoop();
-  void ProcessGameLogic();
-  void RenderFrame();
 
  private:
+  void ProcessGameLogic();
+  void RenderFrame();
   bool IsPlayerMoveValid(const Cell* c) const;
   int MapInputToGridId(char c);
   bool PlayerWins(const Player::ID& player_id);
