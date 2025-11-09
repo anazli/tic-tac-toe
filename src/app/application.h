@@ -18,6 +18,8 @@ class Application {
   void InitPlayers();
   void InitGrid();
   void RunMainLoop();
+  void ProcessGameLogic();
+  void RenderFrame();
 
  private:
   bool IsPlayerMoveValid(const Cell* c) const;

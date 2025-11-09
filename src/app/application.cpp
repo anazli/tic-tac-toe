@@ -21,10 +21,11 @@ Application::Application(unsigned int window_width, unsigned int window_height)
   m_grid_tex.loadFromFile("../assets/black.jpg");
   m_cross.loadFromFile("../assets/textureX.jpg");
   m_circle.loadFromFile("../assets/textureO.jpg");
+  srand48(static_cast<long>(time(nullptr)));
 }
 
 void Application::InitPlayers() {
-  if (drand48() > 0.5) {
+  if (drand48() < 0.5) {
     m_player1.SetTexture(m_cross);
     m_player2.SetTexture(m_circle);
   } else {
@@ -32,7 +33,7 @@ void Application::InitPlayers() {
     m_player2.SetTexture(m_cross);
   }
 
-  if (drand48() > 0.5) {
+  if (drand48() < 0.5) {
     m_player1.SetState(Player::State::READY);
     m_player2.SetState(Player::State::WAITING);
   } else {
@@ -51,69 +52,62 @@ void Application::InitGrid() {
 }
 
 void Application::RunMainLoop() {
+  InitPlayers();
+  InitGrid();
+  m_game_state = GameState::RUNNING;
+
   while (m_window.isOpen()) {
     sf::Event event;
     while (m_window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
         m_window.close();
+        return;
       }
+    }
+    ProcessGameLogic();
+    RenderFrame();
+  }
+}
 
-      m_window.clear(sf::Color::Black);
+void Application::ProcessGameLogic() {
+  if (m_game_state == GameState::FINISHED) {
+    InitPlayers();
+    InitGrid();
+    m_game_state = GameState::RUNNING;
+    return;
+  }
 
-      if (m_game_state == GameState::FINISHED) {
-        InitPlayers();
-        InitGrid();
-        m_game_state = GameState::RUNNING;
-      }
-
-      if (IsMoveDoneByPlayer(event)) {
-        auto pixel_pos = sf::Mouse::getPosition(m_window);
-        auto coords = m_window.mapPixelToCoords(pixel_pos);
-        Cell* c = m_grid.FindCellAtPos(coords);
-        if (IsPlayerMoveValid(c)) {
-          m_grid.UpdateCell(*c, m_player1);
-          m_player1.SetState(Player::State::WAITING);
-          m_player2.SetState(Player::State::READY);
-        }
-      }
-
-      if (event.type == sf::Event::TextEntered) {
-        if (event.text.unicode >= 49 && event.text.unicode <= 57) {
-          if (m_player2.GetState() == Player::State::READY) {
-            int id = MapInputToGridId(event.text.unicode);
-            Cell* c = m_grid.FindCellById(id);
-            if (IsPlayerMoveValid(c)) {
-              m_grid.UpdateCell(*c, m_player2);
-              m_player2.SetState(Player::State::WAITING);
-              m_player1.SetState(Player::State::READY);
-            }
-          }
-        }
-      }
-
-      m_grid.Draw(m_window);
-      m_grid.DrawWiningLine(m_window);
-
-      if (PlayerWins(m_player1.GetId())) {
-        auto text = AppMessage(AppMessage::MsgType::VICTORY, sf::Color::Cyan)
-                        .CreateMsg(m_window);
-        m_window.draw(text);
-        m_game_state = GameState::FINISHED;
-      } else if (PlayerWins(m_player2.GetId())) {
-        auto text = AppMessage(AppMessage::MsgType::DEFEAT, sf::Color::Red)
-                        .CreateMsg(m_window);
-        m_window.draw(text);
-        m_game_state = GameState::FINISHED;
-        // You lost (AI wins)
-        // terminate or reset
-      } else {
-        // check if we have draw
-        // terminate or reset
-      }
-
-      m_window.display();
+  if (sf::Mouse::isButtonPressed(sf::Mouse::Left) &&
+      m_player1.GetState() == Player::State::READY) {
+    auto pixel_pos = sf::Mouse::getPosition(m_window);
+    auto coords = m_window.mapPixelToCoords(pixel_pos);
+    Cell* c = m_grid.FindCellAtPos(coords);
+    if (IsPlayerMoveValid(c)) {
+      m_grid.UpdateCell(*c, m_player1);
+      m_player1.SetState(Player::State::WAITING);
+      m_player2.SetState(Player::State::READY);
     }
   }
+}
+
+void Application::RenderFrame() {
+  m_window.clear(sf::Color::Black);
+
+  m_grid.Draw(m_window);
+  m_grid.DrawWiningLine(m_window);
+  sf::Text text;
+
+  if (PlayerWins(m_player1.GetId())) {
+    text = AppMessage(AppMessage::MsgType::VICTORY, sf::Color::Cyan)
+               .CreateMsg(m_window);
+    m_game_state = GameState::FINISHED;
+  } else if (PlayerWins(m_player2.GetId())) {
+    text = AppMessage(AppMessage::MsgType::DEFEAT, sf::Color::Red)
+               .CreateMsg(m_window);
+    m_game_state = GameState::FINISHED;
+  }
+  m_window.draw(text);
+  m_window.display();
 }
 
 bool Application::IsPlayerMoveValid(const Cell* c) const {
