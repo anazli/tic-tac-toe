@@ -9,6 +9,7 @@
 class Application {
  public:
   enum TextureType { BLACK, CIRCLE, CROSS };
+  enum GameState { RUNNING, FINISHED };
   Application(unsigned int window_width = 800,
               unsigned int window_height = 600);
   Application(const Application& other) = delete;
@@ -31,4 +32,5 @@ class Application {
   sf::Texture m_grid_tex;
   sf::Texture m_circle;
   sf::Texture m_cross;
+  GameState m_game_state;
 };

@@ -13,7 +13,9 @@ const std::string APP_NAME = "Tic Tac Toe";
 }
 
 Application::Application(unsigned int window_width, unsigned int window_height)
-    : m_player1(Player::ID::HUMAN), m_player2(Player::ID::AI) {
+    : m_player1(Player::ID::HUMAN),
+      m_player2(Player::ID::AI),
+      m_game_state(GameState::FINISHED) {
   m_window.setPosition(sf::Vector2i(500, 500));
   m_window.create(sf::VideoMode(window_width, window_height), APP_NAME);
   m_grid_tex.loadFromFile("../assets/black.jpg");
@@ -22,7 +24,7 @@ Application::Application(unsigned int window_width, unsigned int window_height)
 }
 
 void Application::InitPlayers() {
-  if (drand48() < 0.5) {
+  if (drand48() > 0.5) {
     m_player1.SetTexture(m_cross);
     m_player2.SetTexture(m_circle);
   } else {
@@ -30,7 +32,7 @@ void Application::InitPlayers() {
     m_player2.SetTexture(m_cross);
   }
 
-  if (drand48() < 0.5) {
+  if (drand48() > 0.5) {
     m_player1.SetState(Player::State::READY);
     m_player2.SetState(Player::State::WAITING);
   } else {
@@ -57,6 +59,12 @@ void Application::RunMainLoop() {
       }
 
       m_window.clear(sf::Color::Black);
+
+      if (m_game_state == GameState::FINISHED) {
+        InitPlayers();
+        InitGrid();
+        m_game_state = GameState::RUNNING;
+      }
 
       if (IsMoveDoneByPlayer(event)) {
         auto pixel_pos = sf::Mouse::getPosition(m_window);
@@ -90,10 +98,12 @@ void Application::RunMainLoop() {
         auto text = AppMessage(AppMessage::MsgType::VICTORY, sf::Color::Cyan)
                         .CreateMsg(m_window);
         m_window.draw(text);
+        m_game_state = GameState::FINISHED;
       } else if (PlayerWins(m_player2.GetId())) {
         auto text = AppMessage(AppMessage::MsgType::DEFEAT, sf::Color::Red)
                         .CreateMsg(m_window);
         m_window.draw(text);
+        m_game_state = GameState::FINISHED;
         // You lost (AI wins)
         // terminate or reset
       } else {
