@@ -8,89 +8,86 @@
 #include "gfx/app_message.h"
 #include "gfx/grid.h"
 
-Application::Application(unsigned int winWidth, unsigned int winHeith)
-    : window_width_(winWidth),
-      window_height_(winHeith),
-      player1_(Player::ID::HUMAN),
-      player2_(Player::ID::AI) {
-  window_.setPosition(sf::Vector2i(500, 500));
-  window_.create(sf::VideoMode(window_width_, window_height_), "Tic Tac Toe");
+Application::Application(unsigned int window_width, unsigned int window_height)
+    : m_player1(Player::ID::HUMAN), m_player2(Player::ID::AI) {
+  m_window.setPosition(sf::Vector2i(500, 500));
+  m_window.create(sf::VideoMode(window_width, window_height), "Tic Tac Toe");
 }
 
 void Application::InitPlayers(const sf::Texture& tex1,
                               const sf::Texture& tex2) {
   if (drand48() < 0.5) {
-    player1_.SetTexture(tex1);
-    player2_.SetTexture(tex2);
+    m_player1.SetTexture(tex1);
+    m_player2.SetTexture(tex2);
   } else {
-    player1_.SetTexture(tex2);
-    player2_.SetTexture(tex1);
+    m_player1.SetTexture(tex2);
+    m_player2.SetTexture(tex1);
   }
 
   if (drand48() < 0.5) {
-    player1_.SetState(Player::State::READY);
-    player2_.SetState(Player::State::WAITING);
+    m_player1.SetState(Player::State::READY);
+    m_player2.SetState(Player::State::WAITING);
   } else {
-    player1_.SetState(Player::State::WAITING);
-    player2_.SetState(Player::State::READY);
+    m_player1.SetState(Player::State::WAITING);
+    m_player2.SetState(Player::State::READY);
   }
 }
 
 void Application::InitGrid(const sf::Texture& tex) {
   GridParams params;
-  params.window_size_ = window_.getSize();
+  params.window_size_ = m_window.getSize();
   params.default_tex_size_ = tex.getSize();
   params.line_thickness_ = 2.f;
-  grid_.Init(params);
-  grid_.SetInitialStateOfCells(tex, sf::Vector2f(0.99f, 0.99f));
+  m_grid.Init(params);
+  m_grid.SetInitialStateOfCells(tex, sf::Vector2f(0.99f, 0.99f));
 }
 
 void Application::RunMainLoop() {
-  while (window_.isOpen()) {
+  while (m_window.isOpen()) {
     sf::Event event;
-    while (window_.pollEvent(event)) {
+    while (m_window.pollEvent(event)) {
       if (event.type == sf::Event::Closed) {
-        window_.close();
+        m_window.close();
       }
 
-      window_.clear(sf::Color::Black);
+      m_window.clear(sf::Color::Black);
 
       if (IsMoveDoneByPlayer(event)) {
-        auto pixel_pos = sf::Mouse::getPosition(window_);
-        auto coords = window_.mapPixelToCoords(pixel_pos);
-        Cell* c = grid_.FindCellAtPos(coords);
+        auto pixel_pos = sf::Mouse::getPosition(m_window);
+        auto coords = m_window.mapPixelToCoords(pixel_pos);
+        Cell* c = m_grid.FindCellAtPos(coords);
         if (IsPlayerMoveValid(c)) {
-          grid_.UpdateCell(*c, player1_);
-          player1_.SetState(Player::State::WAITING);
-          player2_.SetState(Player::State::READY);
+          m_grid.UpdateCell(*c, m_player1);
+          m_player1.SetState(Player::State::WAITING);
+          m_player2.SetState(Player::State::READY);
         }
       }
 
       if (event.type == sf::Event::TextEntered) {
         if (event.text.unicode >= 49 && event.text.unicode <= 57) {
-          if (player2_.GetState() == Player::State::READY) {
+          if (m_player2.GetState() == Player::State::READY) {
             int id = MapInputToGridId(event.text.unicode);
-            Cell* c = grid_.FindCellById(id);
+            Cell* c = m_grid.FindCellById(id);
             if (IsPlayerMoveValid(c)) {
-              grid_.UpdateCell(*c, player2_);
-              player2_.SetState(Player::State::WAITING);
-              player1_.SetState(Player::State::READY);
+              m_grid.UpdateCell(*c, m_player2);
+              m_player2.SetState(Player::State::WAITING);
+              m_player1.SetState(Player::State::READY);
             }
           }
         }
       }
 
-      grid_.Draw(window_);
-      grid_.DrawWiningLine(window_);
+      m_grid.Draw(m_window);
+      m_grid.DrawWiningLine(m_window);
 
-      if (PlayerWins(player1_.GetId())) {
+      if (PlayerWins(m_player1.GetId())) {
         auto text = AppMessage(AppMessage::MsgType::VICTORY, sf::Color::Cyan)
-                        .CreateMsg(window_);
-        window_.draw(text);
-      } else if (PlayerWins(player2_.GetId())) {
+                        .CreateMsg(m_window);
+        m_window.draw(text);
+      } else if (PlayerWins(m_player2.GetId())) {
         auto text = AppMessage(AppMessage::MsgType::DEFEAT, sf::Color::Red)
-                        .CreateMsg(window_);
-        window_.draw(text);
+                        .CreateMsg(m_window);
+        m_window.draw(text);
         // You lost (AI wins)
         // terminate or reset
       } else {
@@ -98,7 +95,7 @@ void Application::RunMainLoop() {
         // terminate or reset
       }
 
-      window_.display();
+      m_window.display();
     }
   }
 }
@@ -110,10 +107,10 @@ bool Application::IsPlayerMoveValid(const Cell* c) const {
 int Application::MapInputToGridId(char c) { return static_cast<int>(c - '0'); }
 
 bool Application::PlayerWins(const Player::ID& player_id) {
-  return grid_.AnyTripletFor(player_id);
+  return m_grid.AnyTripletFor(player_id);
 }
 
 bool Application::IsMoveDoneByPlayer(const sf::Event& event) {
   return event.type == sf::Event::MouseButtonPressed &&
-         player1_.GetState() == Player::State::READY;
+         m_player1.GetState() == Player::State::READY;
 }

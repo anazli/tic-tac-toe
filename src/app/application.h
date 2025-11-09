@@ -8,7 +8,8 @@
 
 class Application {
  public:
-  Application(unsigned int winWidth = 800, unsigned int winHeight = 600);
+  Application(unsigned int window_width = 800,
+              unsigned int window_height = 600);
   Application(const Application& other) = delete;
   Application& operator=(const Application& other) = delete;
 
@@ -22,10 +23,8 @@ class Application {
   bool PlayerWins(const Player::ID& player_id);
   bool IsMoveDoneByPlayer(const sf::Event& event);
 
-  sf::RenderWindow window_;
-  unsigned int window_width_;
-  unsigned int window_height_;
-  Grid grid_;
-  Player player1_;
-  Player player2_;
+  sf::RenderWindow m_window;
+  Grid m_grid;
+  Player m_player1;
+  Player m_player2;
 };
