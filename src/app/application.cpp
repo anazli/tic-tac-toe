@@ -5,11 +5,14 @@
 #include <SFML/Graphics/Text.hpp>
 #include <iostream>
 
-#include "gfx/grid.h"
 #include "gfx/app_message.h"
+#include "gfx/grid.h"
 
 Application::Application(unsigned int winWidth, unsigned int winHeith)
-    : window_width_(winWidth), window_height_(winHeith), player1_(Player::ID::HUMAN), player2_(Player::ID::AI) {
+    : window_width_(winWidth),
+      window_height_(winHeith),
+      player1_(Player::ID::HUMAN),
+      player2_(Player::ID::AI) {
   window_.setPosition(sf::Vector2i(500, 500));
   window_.create(sf::VideoMode(window_width_, window_height_), "Tic Tac Toe");
 }
@@ -53,14 +56,14 @@ void Application::RunMainLoop() {
       window_.clear(sf::Color::Black);
 
       if (IsMoveDoneByPlayer(event)) {
-          auto pixel_pos = sf::Mouse::getPosition(window_);
-          auto coords = window_.mapPixelToCoords(pixel_pos);
-          Cell* c = grid_.FindCellAtPos(coords);
-          if (IsPlayerMoveValid(c)) {
-            grid_.UpdateCell(*c, player1_);
-            player1_.SetState(Player::State::WAITING);
-            player2_.SetState(Player::State::READY);
-          }
+        auto pixel_pos = sf::Mouse::getPosition(window_);
+        auto coords = window_.mapPixelToCoords(pixel_pos);
+        Cell* c = grid_.FindCellAtPos(coords);
+        if (IsPlayerMoveValid(c)) {
+          grid_.UpdateCell(*c, player1_);
+          player1_.SetState(Player::State::WAITING);
+          player2_.SetState(Player::State::READY);
+        }
       }
 
       if (event.type == sf::Event::TextEntered) {
@@ -81,10 +84,12 @@ void Application::RunMainLoop() {
       grid_.DrawWiningLine(window_);
 
       if (PlayerWins(player1_.GetId())) {
-        auto text = AppMessage(AppMessage::MsgType::VICTORY, sf::Color::Cyan).CreateMsg(window_);
+        auto text = AppMessage(AppMessage::MsgType::VICTORY, sf::Color::Cyan)
+                        .CreateMsg(window_);
         window_.draw(text);
       } else if (PlayerWins(player2_.GetId())) {
-        auto text = AppMessage(AppMessage::MsgType::DEFEAT, sf::Color::Red).CreateMsg(window_);
+        auto text = AppMessage(AppMessage::MsgType::DEFEAT, sf::Color::Red)
+                        .CreateMsg(window_);
         window_.draw(text);
         // You lost (AI wins)
         // terminate or reset
@@ -108,6 +113,7 @@ bool Application::PlayerWins(const Player::ID& player_id) {
   return grid_.AnyTripletFor(player_id);
 }
 
-bool Application::IsMoveDoneByPlayer(const sf::Event& event) { 
-  return event.type == sf::Event::MouseButtonPressed && player1_.GetState() == Player::State::READY;
+bool Application::IsMoveDoneByPlayer(const sf::Event& event) {
+  return event.type == sf::Event::MouseButtonPressed &&
+         player1_.GetState() == Player::State::READY;
 }

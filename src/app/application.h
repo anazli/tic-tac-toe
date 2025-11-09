@@ -22,7 +22,6 @@ class Application {
   bool PlayerWins(const Player::ID& player_id);
   bool IsMoveDoneByPlayer(const sf::Event& event);
 
-
   sf::RenderWindow window_;
   unsigned int window_width_;
   unsigned int window_height_;
