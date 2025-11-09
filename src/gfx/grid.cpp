@@ -25,9 +25,9 @@ void Grid::DrawWiningLine(sf::RenderWindow& window) {
 }
 
 void Grid::UpdateCell(Cell& c, const Player& player) {
-  c.sprite.setTexture(player.texture_);
+  c.sprite.setTexture(player.GetTexture());
   c.state = Cell::State::FILLED;
-  c.player_id = player.id_;
+  c.player_id = player.GetId();
 }
 
 void Grid::SetInitialStateOfCells(const sf::Texture& tex,

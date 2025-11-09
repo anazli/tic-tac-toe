@@ -19,7 +19,7 @@ class Application {
  private:
   bool IsPlayerMoveValid(const Cell* c) const;
   int MapInputToGridId(char c);
-  bool DoesPlayerWin(const Player::ID& player_id);
+  bool PlayerWins(const Player::ID& player_id);
   bool IsMoveDoneByPlayer(const sf::Event& event);
 
 

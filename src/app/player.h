@@ -2,12 +2,20 @@
 
 #include <SFML/Graphics/Texture.hpp>
 
-struct Player {
-  enum class State { READY, WAITING };
-  enum class ID { NONE, HUMAN, AI };
-  Player() : state_(State::WAITING) {}
+class Player {
+  public:
+  enum State { READY, WAITING };
+  enum ID { NONE, HUMAN, AI };
+  Player(const ID& id);
 
-  sf::Texture texture_;
-  State state_;
-  ID id_;
+  ID GetId() const;
+  void SetTexture(const sf::Texture& texture);
+  sf::Texture GetTexture() const;
+  void SetState(const State& state);
+  Player::State GetState() const;
+
+  private:
+  sf::Texture m_texture;
+  Player::State m_state;
+  ID m_id;
 };
