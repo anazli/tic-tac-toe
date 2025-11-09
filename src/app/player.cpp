@@ -8,7 +8,7 @@ Player::ID Player::GetId() const { return m_id; }
 
 void Player::SetTexture(const sf::Texture& texture) { m_texture = texture; }
 
-sf::Texture Player::GetTexture() const { return m_texture; }
+const sf::Texture& Player::GetTexture() const { return m_texture; }
 
 void Player::SetState(const State& state) { m_state = state; }
 

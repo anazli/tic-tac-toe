@@ -10,7 +10,7 @@ class Player {
 
   ID GetId() const;
   void SetTexture(const sf::Texture& texture);
-  sf::Texture GetTexture() const;
+  const sf::Texture& GetTexture() const;
   void SetState(const State& state);
   Player::State GetState() const;
 
