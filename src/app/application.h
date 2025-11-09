@@ -1,6 +1,5 @@
 #pragma once
 
-#include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window.hpp>
 
@@ -18,22 +17,15 @@ class Application {
   void RunMainLoop();
 
  private:
-  bool IsPlayerMoveValid(const Cell& c) const;
+  bool IsPlayerMoveValid(const Cell* c) const;
   int MapInputToGridId(char c);
   bool DoesPlayerWin(const Player::ID& player_id);
-  bool LoadFonts();
-  void DisplayMessage(const std::string& msg, const sf::Font& font,
-                      const sf::Color& c);
+  bool IsMoveDoneByPlayer(const sf::Event& event);
 
-  struct Fonts {
-    sf::Font wining_msg_font_;
-    sf::Font loosing_msg_font_;
-  };
 
   sf::RenderWindow window_;
   unsigned int window_width_;
   unsigned int window_height_;
-  Fonts fonts_;
   Grid grid_;
   Player player1_;
   Player player2_;

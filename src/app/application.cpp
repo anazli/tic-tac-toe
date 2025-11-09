@@ -6,12 +6,12 @@
 #include <iostream>
 
 #include "gfx/grid.h"
+#include "gfx/app_message.h"
 
 Application::Application(unsigned int winWidth, unsigned int winHeith)
     : window_width_(winWidth), window_height_(winHeith) {
   window_.setPosition(sf::Vector2i(500, 500));
   window_.create(sf::VideoMode(window_width_, window_height_), "Tic Tac Toe");
-  LoadFonts();
 }
 
 void Application::InitPlayers(const sf::Texture& tex1,
@@ -54,19 +54,15 @@ void Application::RunMainLoop() {
 
       window_.clear(sf::Color::Black);
 
-      if (event.type == sf::Event::MouseButtonPressed) {
-        if (player1_.state_ == Player::State::READY) {
+      if (IsMoveDoneByPlayer(event)) {
           auto pixel_pos = sf::Mouse::getPosition(window_);
           auto coords = window_.mapPixelToCoords(pixel_pos);
           Cell* c = grid_.FindCellAtPos(coords);
-          if (c) {
-            if (IsPlayerMoveValid(*c)) {
-              grid_.UpdateCell(*c, player1_);
-              player1_.state_ = Player::State::WAITING;
-              player2_.state_ = Player::State::READY;
-            }
+          if (IsPlayerMoveValid(c)) {
+            grid_.UpdateCell(*c, player1_);
+            player1_.state_ = Player::State::WAITING;
+            player2_.state_ = Player::State::READY;
           }
-        }
       }
 
       if (event.type == sf::Event::TextEntered) {
@@ -74,12 +70,10 @@ void Application::RunMainLoop() {
           if (player2_.state_ == Player::State::READY) {
             int id = MapInputToGridId(event.text.unicode);
             Cell* c = grid_.FindCellById(id);
-            if (c) {
-              if (IsPlayerMoveValid(*c)) {
-                grid_.UpdateCell(*c, player2_);
-                player2_.state_ = Player::State::WAITING;
-                player1_.state_ = Player::State::READY;
-              }
+            if (IsPlayerMoveValid(c)) {
+              grid_.UpdateCell(*c, player2_);
+              player2_.state_ = Player::State::WAITING;
+              player1_.state_ = Player::State::READY;
             }
           }
         }
@@ -89,9 +83,11 @@ void Application::RunMainLoop() {
       grid_.DrawWiningLine(window_);
 
       if (DoesPlayerWin(player1_.id_)) {
-        DisplayMessage("You Won!!!", fonts_.wining_msg_font_, sf::Color::Cyan);
+        auto text = AppMessage(AppMessage::MsgType::VICTORY, sf::Color::Cyan).CreateMsg(window_);
+        window_.draw(text);
       } else if (DoesPlayerWin(player2_.id_)) {
-        DisplayMessage("Game Over!", fonts_.loosing_msg_font_, sf::Color::Red);
+        auto text = AppMessage(AppMessage::MsgType::DEFEAT, sf::Color::Red).CreateMsg(window_);
+        window_.draw(text);
         // You lost (AI wins)
         // terminate or reset
       } else {
@@ -104,8 +100,8 @@ void Application::RunMainLoop() {
   }
 }
 
-bool Application::IsPlayerMoveValid(const Cell& c) const {
-  return c.id_ >= 1 && c.id_ <= 9 && c.state_ == Cell::State::EMPTY;
+bool Application::IsPlayerMoveValid(const Cell* c) const {
+  return c && c->id >= 1 && c->id <= 9 && c->state == Cell::State::EMPTY;
 }
 
 int Application::MapInputToGridId(char c) { return static_cast<int>(c - '0'); }
@@ -114,23 +110,6 @@ bool Application::DoesPlayerWin(const Player::ID& player_id) {
   return grid_.AnyTripletFor(player_id);
 }
 
-bool Application::LoadFonts() {
-  if (!fonts_.wining_msg_font_.loadFromFile("../assets/chlorinr.ttf") ||
-      !fonts_.loosing_msg_font_.loadFromFile("../assets/plasdrpe.ttf")) {
-    // error
-    return false;
-  }
-  return true;
-}
-
-void Application::DisplayMessage(const std::string& msg, const sf::Font& font,
-                                 const sf::Color& c) {
-  std::string message = msg;  //+ "Click or press enter to continue..";
-  sf::Text text;
-  text.setFont(font);
-  text.setString(message);
-  text.setCharacterSize(128);
-  text.setFillColor(c);
-  text.setPosition(0.f, window_.getSize().y / 3.f);
-  window_.draw(text);
+bool Application::IsMoveDoneByPlayer(const sf::Event& event) { 
+  return event.type == sf::Event::MouseButtonPressed && player1_.state_ == Player::State::READY;
 }

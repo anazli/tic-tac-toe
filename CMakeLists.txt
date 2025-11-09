@@ -18,6 +18,8 @@ set(SOURCES src/app/application.cpp
             src/gfx/cell.h
             src/gfx/grid.cpp
             src/gfx/grid.h
+            src/gfx/app_message.cpp
+            src/gfx/app_message.h
             src/main/main.cpp
 )
 

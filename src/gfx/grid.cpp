@@ -15,7 +15,7 @@ void Grid::Draw(sf::RenderWindow& window) {
   }
   for (const auto& row : cells_) {
     for (const auto& cell : row) {
-      window.draw(cell.sprite_);
+      window.draw(cell.sprite);
     }
   }
 }
@@ -25,18 +25,18 @@ void Grid::DrawWiningLine(sf::RenderWindow& window) {
 }
 
 void Grid::UpdateCell(Cell& c, const Player& player) {
-  c.sprite_.setTexture(player.texture_);
-  c.state_ = Cell::State::FILLED;
-  c.player_id_ = player.id_;
+  c.sprite.setTexture(player.texture_);
+  c.state = Cell::State::FILLED;
+  c.player_id = player.id_;
 }
 
 void Grid::SetInitialStateOfCells(const sf::Texture& tex,
                                   const sf::Vector2f& scale) {
   for (auto& row : cells_) {
     for (auto& cell : row) {
-      cell.state_ = Cell::State::EMPTY;
-      cell.sprite_.setTexture(tex);
-      cell.sprite_.setScale(scale);
+      cell.state = Cell::State::EMPTY;
+      cell.sprite.setTexture(tex);
+      cell.sprite.setScale(scale);
     }
   }
 }
@@ -45,7 +45,7 @@ Cell* Grid::FindCellAtPos(sf::Vector2f& pos) {
   Cell* c = nullptr;
   for (auto& row : cells_) {
     for (auto& cell : row) {
-      if (cell.sprite_.getGlobalBounds().contains(pos)) {
+      if (cell.sprite.getGlobalBounds().contains(pos)) {
         c = &cell;
         break;
       }
@@ -58,7 +58,7 @@ Cell* Grid::FindCellById(unsigned int id) {
   Cell* c = nullptr;
   for (auto& row : cells_) {
     for (auto& cell : row) {
-      if (cell.id_ == id) {
+      if (cell.id == id) {
         c = &cell;
         break;
       }
@@ -69,47 +69,47 @@ Cell* Grid::FindCellById(unsigned int id) {
 
 bool Grid::AnyTripletFor(const Player::ID& player_id) {
   for (const auto& row : cells_) {
-    if (row[0].player_id_ == player_id && row[1].player_id_ == player_id &&
-        row[2].player_id_ == player_id) {
+    if (row[0].player_id == player_id && row[1].player_id == player_id &&
+        row[2].player_id == player_id) {
       Cell c(row[0]);
       CreateWiningLine(
-          c.sprite_.getPosition().x,
-          c.sprite_.getPosition().y + c.sprite_.getGlobalBounds().height / 2.f,
+          c.sprite.getPosition().x,
+          c.sprite.getPosition().y + c.sprite.getGlobalBounds().height / 2.f,
           0.f);
       return true;
     }
   }
 
   for (int col = 0; col < cells_.size(); ++col) {
-    if (cells_[0][col].player_id_ == player_id &&
-        cells_[1][col].player_id_ == player_id &&
-        cells_[2][col].player_id_ == player_id) {
+    if (cells_[0][col].player_id == player_id &&
+        cells_[1][col].player_id == player_id &&
+        cells_[2][col].player_id == player_id) {
       Cell c(cells_[0][col]);
       CreateWiningLine(
-          c.sprite_.getPosition().x + c.sprite_.getGlobalBounds().width / 2.f,
-          c.sprite_.getPosition().y, 90.f);
+          c.sprite.getPosition().x + c.sprite.getGlobalBounds().width / 2.f,
+          c.sprite.getPosition().y, 90.f);
       return true;
     }
   }
 
-  if (cells_[0][0].player_id_ == player_id &&
-      cells_[1][1].player_id_ == player_id &&
-      cells_[2][2].player_id_ == player_id) {
+  if (cells_[0][0].player_id == player_id &&
+      cells_[1][1].player_id == player_id &&
+      cells_[2][2].player_id == player_id) {
     Cell c(cells_[0][0]);
-    sf::Vector2f pos(c.sprite_.getGlobalBounds().getPosition().x,
-                     c.sprite_.getGlobalBounds().getPosition().y);
-    float offset = c.sprite_.getGlobalBounds().width / 2.f;
+    sf::Vector2f pos(c.sprite.getGlobalBounds().getPosition().x,
+                     c.sprite.getGlobalBounds().getPosition().y);
+    float offset = c.sprite.getGlobalBounds().width / 2.f;
     CreateWiningLine(pos.x + offset, pos.y + offset, 45.f);
     return true;
   }
 
-  if (cells_[0][2].player_id_ == player_id &&
-      cells_[1][1].player_id_ == player_id &&
-      cells_[2][0].player_id_ == player_id) {
+  if (cells_[0][2].player_id == player_id &&
+      cells_[1][1].player_id == player_id &&
+      cells_[2][0].player_id == player_id) {
     Cell c(cells_[2][0]);
-    sf::Vector2f pos(c.sprite_.getGlobalBounds().left,
-                     c.sprite_.getGlobalBounds().getPosition().y);
-    float offset = c.sprite_.getGlobalBounds().height;
+    sf::Vector2f pos(c.sprite.getGlobalBounds().left,
+                     c.sprite.getGlobalBounds().getPosition().y);
+    float offset = c.sprite.getGlobalBounds().height;
     CreateWiningLine(pos.x + offset / 2.f, pos.y + offset / 2.f, -45.f);
     return true;
   }
@@ -125,8 +125,8 @@ void Grid::ArrangeCells(const sf::Vector2u& texture_size,
       float x = origin_.x + texture_size.x * col + line_thickness;
       float y = origin_.y + texture_size.y * row + line_thickness;
       Cell c;
-      c.sprite_.setPosition(sf::Vector2f(x, y));
-      c.id_ = cell_id++;
+      c.sprite.setPosition(sf::Vector2f(x, y));
+      c.id = cell_id++;
       cols.emplace_back(c);
     }
     cells_.emplace_back(cols);

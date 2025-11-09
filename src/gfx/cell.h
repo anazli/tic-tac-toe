@@ -8,14 +8,14 @@
 struct Cell {
   enum class State { EMPTY, FILLED };
 
-  Cell() : state_(State::EMPTY), player_id_(Player::ID::NONE) {}
+  Cell() : state(State::EMPTY), player_id(Player::ID::NONE) {}
   bool CanBeUpdated(const sf::Vector2f& mousePos) const {
-    return sprite_.getGlobalBounds().contains(mousePos) &&
-           state_ == State::EMPTY;
+    return sprite.getGlobalBounds().contains(mousePos) &&
+           state == State::EMPTY;
   }
 
-  State state_;
-  sf::Sprite sprite_;
-  unsigned int id_;
-  Player::ID player_id_;
+  State state;
+  sf::Sprite sprite;
+  unsigned int id;
+  Player::ID player_id;
 };
