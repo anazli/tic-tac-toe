@@ -1,8 +1,14 @@
 
 #include "app/application.h"
 
+#include <limits.h>
+#include <unistd.h>
+
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <cstdlib>
+#include <ctime>
+#include <filesystem>
 #include <iostream>
 
 #include "gfx/app_message.h"
@@ -10,7 +16,38 @@
 
 namespace {
 const std::string APP_NAME = "Tic Tac Toe";
+const std::string ASSET_FOLDER = "assets";
+const std::string GRID_ASSET_NAME = "black.jpg";
+const std::string CROSS_ASSET_NAME = "textureX.jpg";
+const std::string CIRCLE_ASSET_NAME = "textureO.jpg";
+
+static std::string FindAssetsDir() {
+  namespace fs = std::filesystem;
+  char buf[PATH_MAX];
+  ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+  fs::path start;
+  if (len != -1) {
+    buf[len] = '\0';
+    start = fs::path(buf).parent_path();
+  } else {
+    start = fs::current_path();
+  }
+
+  // walk up a few levels searching for an "assets" directory
+  for (int i = 0; i < 10; ++i) {
+    fs::path cand = start / ASSET_FOLDER;
+    if (fs::exists(cand) && fs::is_directory(cand)) {
+      return cand.string();
+    }
+    if (start.has_parent_path())
+      start = start.parent_path();
+    else
+      break;
+  }
+
+  return std::string();
 }
+}  // namespace
 
 Application::Application(unsigned int window_width, unsigned int window_height)
     : m_player1(Player::ID::HUMAN),
@@ -18,9 +55,15 @@ Application::Application(unsigned int window_width, unsigned int window_height)
       m_game_state(GameState::FINISHED) {
   m_window.setPosition(sf::Vector2i(500, 500));
   m_window.create(sf::VideoMode(window_width, window_height), APP_NAME);
-  m_grid_tex.loadFromFile("../assets/black.jpg");
-  m_cross.loadFromFile("../assets/textureX.jpg");
-  m_circle.loadFromFile("../assets/textureO.jpg");
+
+  std::string assets_dir = FindAssetsDir();
+  if (assets_dir.empty()) {
+    assets_dir = "./" + ASSET_FOLDER;
+  }
+
+  m_grid_tex.loadFromFile(assets_dir + "/" + GRID_ASSET_NAME);
+  m_cross.loadFromFile(assets_dir + "/" + CROSS_ASSET_NAME);
+  m_circle.loadFromFile(assets_dir + "/" + CIRCLE_ASSET_NAME);
   srand48(static_cast<long>(time(nullptr)));
 }
 
