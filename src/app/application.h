@@ -8,13 +8,14 @@
 
 class Application {
  public:
+  enum TextureType { BLACK, CIRCLE, CROSS };
   Application(unsigned int window_width = 800,
               unsigned int window_height = 600);
   Application(const Application& other) = delete;
   Application& operator=(const Application& other) = delete;
 
-  void InitPlayers(const sf::Texture& tex1, const sf::Texture& tex2);
-  void InitGrid(const sf::Texture& tex);
+  void InitPlayers();
+  void InitGrid();
   void RunMainLoop();
 
  private:
@@ -27,4 +28,7 @@ class Application {
   Grid m_grid;
   Player m_player1;
   Player m_player2;
+  sf::Texture m_grid_tex;
+  sf::Texture m_circle;
+  sf::Texture m_cross;
 };

@@ -8,20 +8,26 @@
 #include "gfx/app_message.h"
 #include "gfx/grid.h"
 
+namespace {
+const std::string APP_NAME = "Tic Tac Toe";
+}
+
 Application::Application(unsigned int window_width, unsigned int window_height)
     : m_player1(Player::ID::HUMAN), m_player2(Player::ID::AI) {
   m_window.setPosition(sf::Vector2i(500, 500));
-  m_window.create(sf::VideoMode(window_width, window_height), "Tic Tac Toe");
+  m_window.create(sf::VideoMode(window_width, window_height), APP_NAME);
+  m_grid_tex.loadFromFile("../assets/black.jpg");
+  m_cross.loadFromFile("../assets/textureX.jpg");
+  m_circle.loadFromFile("../assets/textureO.jpg");
 }
 
-void Application::InitPlayers(const sf::Texture& tex1,
-                              const sf::Texture& tex2) {
+void Application::InitPlayers() {
   if (drand48() < 0.5) {
-    m_player1.SetTexture(tex1);
-    m_player2.SetTexture(tex2);
+    m_player1.SetTexture(m_cross);
+    m_player2.SetTexture(m_circle);
   } else {
-    m_player1.SetTexture(tex2);
-    m_player2.SetTexture(tex1);
+    m_player1.SetTexture(m_circle);
+    m_player2.SetTexture(m_cross);
   }
 
   if (drand48() < 0.5) {
@@ -33,13 +39,13 @@ void Application::InitPlayers(const sf::Texture& tex1,
   }
 }
 
-void Application::InitGrid(const sf::Texture& tex) {
+void Application::InitGrid() {
   GridParams params;
   params.window_size_ = m_window.getSize();
-  params.default_tex_size_ = tex.getSize();
+  params.default_tex_size_ = m_grid_tex.getSize();
   params.line_thickness_ = 2.f;
   m_grid.Init(params);
-  m_grid.SetInitialStateOfCells(tex, sf::Vector2f(0.99f, 0.99f));
+  m_grid.SetInitialStateOfCells(m_grid_tex, sf::Vector2f(0.99f, 0.99f));
 }
 
 void Application::RunMainLoop() {
